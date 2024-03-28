@@ -3,19 +3,23 @@ import { useState } from "react";
 const App = () => {
     const [formData, setFormData] = useState({
         name: "",
-        number: "",
+        phone: "",
         password: "",
         confirmPassword: "",
     });
     const [formErrors, setFormErrors] = useState({
         name: "",
-        number: "",
+        phone: "",
         password: "",
         confirmPassword: "",
     });
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'phone' && !/^\d*$/.test(value)) {
+            // If the input is not a digit, don't update the state
+            return;
+        }
         setFormData({
             ...formData,
             [name]: value,
@@ -25,7 +29,7 @@ const App = () => {
         e.preventDefault();
         const regex = {
             name: /^[a-zA-Z\s]+$/,
-            number: /^\d{10}$/,
+            phone: /^\+?\d{10}$/,
             password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@])[a-zA-Z\d@]{8,}$/,
             confirmPassword:
                 /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@])[a-zA-Z\d@]{8,}$/,
@@ -34,8 +38,8 @@ const App = () => {
         if (!regex.name.test(formData.name)) {
             errors.name = "Name is invalid.";
         }
-        if (!regex.number.test(formData.number)) {
-            errors.number = "Number is invalid.";
+        if (!regex.phone.test(formData.phone)) {
+            errors.phone = "number is invalid.";
         }
         if (!regex.password.test(formData.password)) {
             errors.password = "Password is invalid.";
@@ -55,13 +59,13 @@ const App = () => {
         setShowSuccessPopup(false);
         setFormData({
             name: "",
-            number: "",
+            phone: "",
             password: "",
             confirmPassword: "",
         });
         setFormErrors({
             name: "",
-            number: "",
+            phone: "",
             password: "",
             confirmPassword: "",
         });
@@ -83,17 +87,19 @@ const App = () => {
                     )}
                 </div>
                 <div className="form-group">
-                    <label htmlFor="number">Number:</label>
+                    <label htmlFor="tel">Number:</label>
                     <input
-                        type="text"
-                        id="number"
-                        name="number"
-                        value={formData.number}
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        pattern="[0-9]"
                         onChange={handleChange}
-                        className={formErrors.number ? "error" : ""}
+                        className={`w-100 p-2 ${formErrors.phone ? "error" : ""}`}
+                        maxLength={10}
                     />
-                    {formErrors.number && (
-                        <p className="error-message">{formErrors.number}</p>
+                    {formErrors.phone && (
+                        <p className="error-message">{formErrors.phone}</p>
                     )}
                 </div>
                 <div className="form-group">
